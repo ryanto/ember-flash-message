@@ -5,7 +5,20 @@ var App = Ember.Application.create({
 App.Router.map(function() {
   this.route('page1');
   this.route('page2');
+  this.route('promise');
 });
+
+App.PromiseRoute = Ember.Route.extend({
+  model: function() {
+    return new Ember.RSVP.Promise(function(resolve) {
+      Ember.run.later(function() {
+        resolve();
+      }, 100);
+    });
+  }
+});
+
+App.LoadingRoute = Ember.Route.extend();
 
 Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}}');
 
@@ -83,5 +96,16 @@ test("should not see a flash message once it has been displayed", function() {
     .visit("/page2")
     .then(function() {
       assertNoMessage();
+    });
+});
+
+test("should not display or destroy the flash message when in the loading route", function() {
+  visit("/")
+    .then(function() {
+      router().flashMessage('test');
+    })
+    .visit("/promise")
+    .then(function() {
+      assertMessage();
     });
 });
