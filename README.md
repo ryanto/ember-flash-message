@@ -8,14 +8,14 @@ displaying one time notices on later pages.
 
 You should include
 [ember-flash-message.js](https://raw.github.com/ryanto/ember-flash-message/master/flash-message.js) on your page. Since this
-plugin depends on ember.js you will have to include ember first. Now any
+plugin depends on Ember.js you will have to include Ember first. Now any
 of your route's will have access to ``flashMessage(message)``, which
 will set the message.
 
 ### Template
 
 Any template that you want to display the message should contain the
-following. It makes most sense to put this in your ``application``
+following. It makes the most sense to put this in your ``application``
 template to have the message be available on all pages.
 
 ```handlebars
@@ -41,6 +41,26 @@ Ember.LoginRoute = Ember.Route.extend({
   }
 });
 ```
+
+#### Instant Message
+
+There may be some instances where you want to display the message right
+away and not wait for the route to transition. You can use the ``now()``
+function to update the message.
+
+```javascript
+Ember.ProfileRoute = Ember.Route.extend({
+  actions: {
+    save: function(profile) {
+      var router = this;
+
+      profile.save().then(function() {
+        router.flashMessage('Your profile has been updated!').now();
+      });
+    }
+  }
+});
+```   
 
 ## Development
 

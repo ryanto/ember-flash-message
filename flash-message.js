@@ -2,7 +2,14 @@ Ember.FlashMessageController = Ember.Controller.extend({
   queuedMessage: null,
   currentMessage: null,
 
-  message: Ember.computed.alias('currentMessage')
+  message: Ember.computed.alias('currentMessage'),
+
+  now: function() {
+    this.setProperties({
+      queuedMessage: null,
+      currentMessage: this.get('queuedMessage')
+    });
+  }
 });
 Ember.Handlebars.registerHelper('flashMessage', function(options) {
   var template = options.fn,
@@ -25,6 +32,7 @@ Ember.Handlebars.registerHelper('flashMessage', function(options) {
       });
 
   options.hash.controller = controller;
+  options.hashTypes = options.hasTypes || {};
 
   Ember.Handlebars.helpers.view.call(this, parent, options);
 });
@@ -36,7 +44,11 @@ Ember.Application.initializer({
 });
 Ember.FlashMessageRouteMixin = Ember.Mixin.create({
   flashMessage: function(message) {
-    this.controllerFor('flashMessage').set('queuedMessage', message);
+    var controller = this.controllerFor('flashMessage');
+
+    controller.set('queuedMessage', message);
+
+    return controller;
   }
 });
 Ember.Route.reopen(
@@ -50,10 +62,7 @@ Ember.Route.reopen(
     // do not display message in loading route, wait until
     // any loading is done.
     if (routeName !== "loading") {
-      controller.setProperties({
-        queuedMessage: null,
-        currentMessage: controller.get('queuedMessage')
-      });
+      controller.now();
     }
   }
 });
