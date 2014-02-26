@@ -32,7 +32,7 @@ Ember.Handlebars.registerHelper('flashMessage', function(options) {
       });
 
   options.hash.controller = controller;
-  options.hashTypes = options.hasTypes || {};
+  options.hashTypes = options.hashTypes || {};
 
   Ember.Handlebars.helpers.view.call(this, parent, options);
 });
