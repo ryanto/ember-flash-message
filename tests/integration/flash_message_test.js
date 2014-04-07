@@ -9,6 +9,7 @@ App.Router.map(function() {
   this.resource('posts', { path: '/posts' }, function() {
     this.route('new');
   });
+  this.route('fromController');
 });
 
 App.PromiseRoute = Ember.Route.extend({
@@ -22,6 +23,17 @@ App.PromiseRoute = Ember.Route.extend({
 });
 
 App.LoadingRoute = Ember.Route.extend();
+
+App.FromControllerController = Ember.Controller.extend({
+  needs: 'flashMessage'.w(),
+
+  actions: {
+    showMessage: function() {
+      var flashMessage = this.get('controllers.flashMessage');
+      flashMessage.set('message', 'testing');
+    }
+  }
+});
 
 Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}}');
 
@@ -135,4 +147,28 @@ test("should display the flash message for resource", function() {
   visit("/posts/new");
 
   andThen(assertMessage);
+
+});
+
+test("should be able to use the flash messenger from a controller", function() {
+  visit("/");
+
+  andThen(function() {
+    assertNoMessage();
+  });
+
+  visit("/fromController");
+
+  andThen(function() {
+    assertNoMessage();
+  });
+
+  andThen(function() {
+    App.__container__.lookup('controller:fromController')
+      .send('showMessage');
+  });
+
+  andThen(function() {
+    assertMessage();
+  });
 });
