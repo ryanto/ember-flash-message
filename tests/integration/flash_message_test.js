@@ -6,6 +6,9 @@ App.Router.map(function() {
   this.route('page1');
   this.route('page2');
   this.route('promise');
+  this.resource('posts', { path: '/posts' }, function() {
+    this.route('new');
+  });
 });
 
 App.PromiseRoute = Ember.Route.extend({
@@ -118,6 +121,18 @@ test("should display the flash message instantly", function() {
   andThen(function() {
     router().flashMessage('instant message').now();
   });
+
+  andThen(assertMessage);
+});
+
+test("should display the flash message for resource", function() {
+  visit("/");
+
+  andThen(function() {
+    router().flashMessage('test');
+  });
+
+  visit("/posts/new");
 
   andThen(assertMessage);
 });
