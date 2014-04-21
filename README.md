@@ -69,7 +69,7 @@ started:
 
 ```
 bundle install
-rackup
+bundle exec rackup
 ```
 
 Edit code and visit [http://localhost:9292](http://localhost:9292) to
