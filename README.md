@@ -7,10 +7,10 @@ displaying one time notices on later pages.
 ## Usage
 
 You should include
-[ember-flash-message.js](https://raw.github.com/ryanto/ember-flash-message/master/flash-message.js) on your page. Since this
-plugin depends on Ember.js you will have to include Ember first. Now any
-of your route's will have access to ``flashMessage(message)``, which
-will set the message.
+[ember-flash-message.js](https://raw.github.com/ryanto/ember-flash-message/master/flash-message.js)
+on your page. Since the plugin depends on Ember.js you will have to
+include Ember first. Now any of your route's will have access to
+``flashMessage('message')``, which will set the message.
 
 ### Template
 
@@ -42,7 +42,10 @@ Ember.LoginRoute = Ember.Route.extend({
 });
 ```
 
-#### Instant Message
+### Controllers
+
+
+### Instant Message
 
 There may be some instances where you want to display the message right
 away and not wait for the route to transition. You can use the ``now()``
@@ -61,6 +64,32 @@ Ember.ProfileRoute = Ember.Route.extend({
   }
 });
 ```   
+
+### Controller
+
+The flash message can be set from the controller by adding a ``needs``
+dependency for the ``flashMessage`` controller. See the example below.
+
+
+```javascript
+App.PostController = Ember.ObjectController.extend({
+  needs: 'flashMessage'.w(),
+
+  actions: {
+    save: function() {
+      var flashMessage = this.get('controllers.flashMessage');
+
+      this.get('model').save()
+        .then(function() {
+          flashMessage.set('message', 'Saved!');
+        });
+    }
+  }
+});
+```
+
+Please note that whenever you set the flash message from a control it
+will be displayed instantly.
 
 ## Development
 
