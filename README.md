@@ -42,9 +42,6 @@ Ember.LoginRoute = Ember.Route.extend({
 });
 ```
 
-### Controllers
-
-
 ### Instant Message
 
 There may be some instances where you want to display the message right
@@ -73,7 +70,7 @@ dependency for the ``flashMessage`` controller. See the example below.
 
 ```javascript
 App.PostController = Ember.ObjectController.extend({
-  needs: 'flashMessage'.w(),
+  needs: ['flashMessage'],
 
   actions: {
     save: function() {
@@ -81,7 +78,7 @@ App.PostController = Ember.ObjectController.extend({
 
       this.get('model').save()
         .then(function() {
-          flashMessage.set('message', 'Saved!');
+          flashMessage.set('message', 'Blog post saved!');
         });
     }
   }
