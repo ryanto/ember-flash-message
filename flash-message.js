@@ -11,6 +11,18 @@ Ember.FlashMessageController = Ember.Controller.extend({
     });
   }
 });
+Ember.FlashMessageControllerMixin = Ember.Mixin.create({
+  needs: ['flashMessage'],
+  flashMessage: function(message) {
+    var controller = this.get('controllers.flashMessage');
+
+    controller.set('queuedMessage', message);
+
+    return controller;
+  }
+});
+
+Ember.Controller.reopen(Ember.FlashMessageControllerMixin);
 Ember.Handlebars.registerHelper('flashMessage', function(options) {
   var template = options.fn,
       container = options.data.keywords.controller.container,
@@ -42,6 +54,7 @@ Ember.Application.initializer({
     container.register('controller:flashMessage', Ember.FlashMessageController);
   }
 });
+
 Ember.FlashMessageRouteMixin = Ember.Mixin.create({
   flashMessage: function(message) {
     var controller = this.controllerFor('flashMessage');
@@ -51,8 +64,9 @@ Ember.FlashMessageRouteMixin = Ember.Mixin.create({
     return controller;
   }
 });
-Ember.Route.reopen(
-  Ember.FlashMessageRouteMixin, {
+
+Ember.Route.reopen(Ember.FlashMessageRouteMixin);
+Ember.Route.reopen({
   activate: function() {
     this._super.apply(this, arguments);
 

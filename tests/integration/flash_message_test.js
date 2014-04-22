@@ -22,20 +22,22 @@ App.PromiseRoute = Ember.Route.extend({
   }
 });
 
-App.LoadingRoute = Ember.Route.extend();
+App.PostsController = Ember.Controller.extend({ name: 'Blog' });
 
-App.FromControllerController = Ember.Controller.extend({
-  needs: 'flashMessage'.w(),
-
+App.PostsNewController = Ember.Controller.extend({
+  needs: ['posts'],
   actions: {
-    showMessage: function() {
-      var flashMessage = this.get('controllers.flashMessage');
-      flashMessage.set('message', 'testing');
+    save: function() {
+      this.flashMessage("Post saved");
+      this.transitionToRoute('/');
     }
   }
 });
 
-Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}}');
+App.LoadingRoute = Ember.Route.extend();
+
+Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}} {{outlet}}');
+Ember.TEMPLATES["posts/new"] = Ember.Handlebars.compile('<p id="name">{{controllers.posts.name}}</p><button id="save" {{action "save"}}>Save</button>');
 
 var findMessage = function() {
   return $('#qunit-fixture .message');
@@ -150,25 +152,19 @@ test("should display the flash message for resource", function() {
 
 });
 
-test("should be able to use the flash messenger from a controller", function() {
-  visit("/");
+test("should be able to set from the controller", function() {
+  visit('/posts/new');
 
   andThen(function() {
-    assertNoMessage();
+    click('#save');
   });
 
-  visit("/fromController");
+  andThen(assertMessage);
+});
 
+test("should not override a controllers needs", function() {
+  visit('/posts/new');
   andThen(function() {
-    assertNoMessage();
-  });
-
-  andThen(function() {
-    App.__container__.lookup('controller:fromController')
-      .send('showMessage');
-  });
-
-  andThen(function() {
-    assertMessage();
+    ok($('#name').text() == "Blog");
   });
 });
