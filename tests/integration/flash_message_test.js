@@ -35,7 +35,9 @@ App.FromControllerController = Ember.Controller.extend({
   }
 });
 
-Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}}');
+var ApplicationTemplate = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}}');
+
+Ember.TEMPLATES.application = ApplicationTemplate;
 
 var findMessage = function() {
   return $('#qunit-fixture .message');
@@ -170,5 +172,37 @@ test("should be able to use the flash messenger from a controller", function() {
 
   andThen(function() {
     assertMessage();
+  });
+});
+
+module("child template contains flash message template", {
+  setup: function() {
+    App.reset();
+    App.injectTestHelpers();
+    Ember.TEMPLATES.application = Ember.Handlebars.compile('{{outlet}}');
+    Ember.TEMPLATES.posts = ApplicationTemplate;
+  },
+
+  teardown: function() {
+    Ember.TEMPLATES.application = ApplicationTemplate;
+    Ember.TEMPLATES.posts = undefined;
+  }
+});
+
+test("it shows flash messages on child route", function() {
+  expect(2);
+
+  visit("/");
+
+  andThen(function() {
+    router().flashMessage('test');
+  });
+
+  visit("/posts");
+
+  andThen(assertMessage);
+
+  andThen(function() {
+    equal(findMessage().text().trim(), 'test');
   });
 });
