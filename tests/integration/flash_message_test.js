@@ -35,10 +35,14 @@ App.FromControllerController = Ember.Controller.extend({
   }
 });
 
-Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span class="message">{{message}}</span>{{/flashMessage}}');
+Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span {{bind-attr class=":message message.type"}}>{{message.text}}</span>{{/flashMessage}}');
 
 var findMessage = function() {
   return $('#qunit-fixture .message');
+};
+
+var hasClass = function(className) {
+  return $('#qunit-fixture .message').hasClass(className);
 };
 
 var messageExists = function() {
@@ -96,6 +100,25 @@ test("should see a flash message when I transition to the next route", function(
 
   andThen(function() {
     equal(findMessage().text().trim(), 'hello world');
+  });
+});
+
+test("should have a message object with text and type defined", function() {
+  expect(3);
+
+  visit('/');
+
+  andThen(function() {
+    router().flashMessage('Happy Message', 'success');
+  });
+
+  visit("/page1");
+
+  andThen(assertMessage);
+
+  andThen(function() {
+    equal(findMessage().text().trim(), 'Happy Message');
+    ok(hasClass('success'));
   });
 });
 
