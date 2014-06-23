@@ -20,7 +20,9 @@ template to have the message be available on all pages.
 
 ```handlebars
 {{#flashMessage}}
-  {{message}}
+  <div {{bind-attr class="message.type"}}>
+    {{message.text}}
+  </div>
 {{/flashMessage}}
 ```
 
@@ -35,7 +37,7 @@ Ember.LoginRoute = Ember.Route.extend({
   actions: {
     login: function() {
       // login user ...
-      this.flashMessage('Welcome back!');
+      this.flashMessage('Welcome back!', 'success');
       this.transitionTo('index');
     }
   }
