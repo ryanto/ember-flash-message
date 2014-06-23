@@ -9,7 +9,14 @@ Ember.FlashMessageController = Ember.Controller.extend({
       queuedMessage: null,
       currentMessage: this.get('queuedMessage')
     });
+  },
+
+  actions: {
+    dismissFlashMessage: function() {
+      this.set('currentMessage', null);
+    }
   }
+
 });
 Ember.Handlebars.registerHelper('flashMessage', function(options) {
   var template = options.fn,
