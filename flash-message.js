@@ -43,17 +43,25 @@ Ember.Application.initializer({
   }
 });
 Ember.FlashMessageRouteMixin = Ember.Mixin.create({
-  flashMessage: function(message) {
+  flashMessage: function(message, messageType) {
     var controller = this.controllerFor('flashMessage');
 
-    controller.set('queuedMessage', message);
+    var messageObject = Ember.Object.create({
+      text: message
+    });
+
+    if(typeof messageType !== 'undefined') {
+      messageObject.set('type', messageType);
+    }
+
+    controller.set('queuedMessage', messageObject);
 
     return controller;
   }
 });
 Ember.Route.reopen(
   Ember.FlashMessageRouteMixin, {
-  activate: function() {
+  enter: function() {
     this._super.apply(this, arguments);
 
     var controller = this.controllerFor('flashMessage'),
