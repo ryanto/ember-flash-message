@@ -68,7 +68,7 @@ Ember.ProfileRoute = Ember.Route.extend({
 
 While you could easily remove flash messages yourself, the main FlashMessageController contains a convinence [action](http://emberjs.com/guides/templates/actions/) named `dismissFlashMessage` that will remove the current message. To use this action, you just need to add a link _(or any other element)_ that triggers it.
 
-```
+```handlebars
 {{#flashMessage}}
   <div {{bind-attr class=':flash-message message.type'}}>
     {{message.text}}
