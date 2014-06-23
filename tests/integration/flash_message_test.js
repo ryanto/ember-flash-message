@@ -150,6 +150,22 @@ test("should not display or destroy the flash message when in the loading route"
   andThen(assertMessage);
 });
 
+test("should have an action that dismisses the current flash message", function() {
+  visit("/");
+
+  andThen(function() {
+    router().flashMessage('Dismiss Me').now();
+  });
+
+  andThen(function() {
+    equal(findMessage().text().trim(), 'Dismiss Me');
+    App.__container__.lookup('controller:flashMessage')
+      .send('dismissFlashMessage');
+    assertNoMessage();
+  });
+
+});
+
 test("should display the flash message instantly", function() {
   visit("/");
 
