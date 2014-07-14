@@ -18,6 +18,21 @@ Ember.FlashMessageController = Ember.Controller.extend({
   }
 
 });
+Ember.FlashMessageView = Ember.View.extend({
+  autoDismiss: function() {
+    var that = this;
+    if (this.get('_state') === 'inDOM') {
+      Ember.run(function() {
+        that.$().fadeOut(250, function() {
+          if (that.get('controller')) {
+            that.get('controller').set('currentMessage', null);
+          }
+        });
+      });
+    }
+  }
+});
+
 Ember.Handlebars.registerHelper('flashMessage', function(options) {
   var template = options.fn,
       container = options.data.keywords.controller.container,
@@ -29,9 +44,14 @@ Ember.Handlebars.registerHelper('flashMessage', function(options) {
               view;
 
           if (currentMessage) {
-            view = Ember.View.create({
+            view = Ember.FlashMessageView.create({
               template: template
             });
+            if (Ember.get(currentMessage, 'dismissTimer')) {
+              Ember.run.later(function() {
+                view.autoDismiss();
+              }, currentMessage.get('dismissTimer'));
+            }
           }
 
           this.set('currentView', view);
@@ -50,7 +70,7 @@ Ember.Application.initializer({
   }
 });
 Ember.FlashMessageRouteMixin = Ember.Mixin.create({
-  flashMessage: function(message, messageType) {
+  flashMessage: function(message, messageType, dismissTimer) {
     var controller = this.controllerFor('flashMessage');
 
     var messageObject = Ember.Object.create({
@@ -59,6 +79,10 @@ Ember.FlashMessageRouteMixin = Ember.Mixin.create({
 
     if(typeof messageType !== 'undefined') {
       messageObject.set('type', messageType);
+    }
+
+    if(typeof dismissTimer !== 'undefined') {
+      messageObject.set('dismissTimer', dismissTimer);
     }
 
     controller.set('queuedMessage', messageObject);

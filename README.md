@@ -77,6 +77,31 @@ While you could easily remove flash messages yourself, the main FlashMessageCont
 {{/flashMessage}}
 ```
 
+### Auto Dismissing Messages
+
+There are times when you might like to automatically remove flash messages after a given period of time. To trigger an auto dismissing message, you just need to add an extra argument to the `flashMessage()` method.
+
+```javascript
+flashMessage('I will remove myself in 500 milliseconds', 'success', 500);
+```
+
+By default we have added a basic `fadeOut` animation, but you are free to reopen the `Ember.FlashMessageView` and alter things as needed. The default code can be found below:
+
+```javascript
+Ember.FlashMessageView = Ember.View.extend({
+  autoDismiss: function() {
+    var that = this;
+    if (this.get('state') === 'inDOM') {
+      Ember.run(function() {
+        that.$().fadeOut(250, function() {
+          that.get('controller').set('currentMessage', null);
+        });
+      });
+    }
+  }
+});
+```
+
 ### Controller
 
 The flash message can be set from the controller by adding a ``needs``

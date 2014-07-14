@@ -176,6 +176,23 @@ test("should display the flash message instantly", function() {
   andThen(assertMessage);
 });
 
+test("should be able to auto dismiss a flash message", function() {
+  visit("/");
+
+  andThen(function() {
+    router().flashMessage('I will be gone in 0.5 seconds', 'success', 500).now();
+  });
+
+  andThen(assertMessage);
+
+  // This appears to halt the run loop, so that the event we are waiting
+  // for never actually fires. I'm not sure how to find a way around this.
+  // Ember.run.later(function() {
+  //   assertNoMessage();
+  // }, 1000);
+
+});
+
 test("should display the flash message for resource", function() {
   visit("/");
 
