@@ -72,7 +72,7 @@ While you could easily remove flash messages yourself, the main FlashMessageCont
 {{#flashMessage}}
   <div {{bind-attr class=':flash-message message.type'}}>
     {{message.text}}
-    <a href='#' class='dismiss' {{action 'dismissFlasshMessage'}}>x</a>
+    <a href='#' class='dismiss' {{action 'dismissFlashMessage'}}>x</a>
   </div>
 {{/flashMessage}}
 ```
