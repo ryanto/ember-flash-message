@@ -55,7 +55,7 @@ Ember.Handlebars.registerHelper('flashMessage', function(options) {
           }
 
           this.set('currentView', view);
-        }.observes('controller.currentMessage')
+        }.observes('controller.currentMessage').on('init')
       });
 
   options.hash.controller = controller;
