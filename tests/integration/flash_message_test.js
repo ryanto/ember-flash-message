@@ -25,17 +25,39 @@ App.PromiseRoute = Ember.Route.extend({
 App.LoadingRoute = Ember.Route.extend();
 
 App.FromControllerController = Ember.Controller.extend({
-  needs: 'flashMessage'.w(),
+  needs: 'flashMessage customFlashTemplate'.w(),
 
   actions: {
     showMessage: function() {
       var flashMessage = this.get('controllers.flashMessage');
       flashMessage.set('message', 'testing');
-    }
+    },
+
+    showCustomTemplate: function() {
+      var flashMessage = this.get('controllers.flashMessage');
+      flashMessage.set('message', Ember.Object.create({
+        templateName: 'customFlashTemplate',
+        controller: this.get('controllers.customFlashTemplate'),
+      }));
+    },
   }
 });
 
+App.CustomFlashTemplateController = Ember.Controller.extend({
+  model: null,
+  customActionCalled: false,
+
+  actions: {
+    customAction: function() {
+      this.set('customActionCalled', true);
+    },
+  },
+});
+  
+
 Ember.TEMPLATES.application = Ember.Handlebars.compile('{{#flashMessage}}<span {{bind-attr class=":message message.type"}}>{{message.text}}</span>{{/flashMessage}}');
+Ember.TEMPLATES.customFlashTemplate = Ember.Handlebars.compile('<span class="message custom"}}><a id="custom-flash-template-action" {{action "customAction"}}>Blah</a></span>');
+
 
 var findMessage = function() {
   return $('#qunit-fixture .message');
@@ -211,3 +233,47 @@ test("should be able to use the flash messenger from a controller", function() {
     assertMessage();
   });
 });
+
+test("should be able to render a custom flash template from a route", function() {
+  visit("/");
+
+  andThen(function() {
+    var customFlashTemplateController = App.__container__.lookup('controller:customFlashTemplate');
+
+    customFlashTemplateController.set('model', {name: 'Foo'});
+
+    router().flash({
+      templateName: 'customFlashTemplate',
+      controller: customFlashTemplateController,
+    });
+  });
+
+  visit("/posts/new");
+
+  andThen(function() {
+    assertMessage();
+    ok(hasClass('custom'));
+  });
+});
+
+test("should be able to render a custom flash template from a controller", function() {
+  visit("/");
+
+  andThen(function() {
+    App.__container__.lookup('controller:fromController')
+      .send('showCustomTemplate');
+  });
+
+  andThen(function() {
+    assertMessage();
+    ok(hasClass('custom'));
+  });
+
+  click("#custom-flash-template-action");
+
+  andThen(function() {
+    var customFlashTemplateController = App.__container__.lookup('controller:customFlashTemplate');
+    ok(customFlashTemplateController.get('customActionCalled'));
+  });
+});
+

@@ -103,6 +103,52 @@ App.PostController = Ember.ObjectController.extend({
 Please note that whenever you set the flash message from a control it
 will be displayed instantly.
 
+### Using flash templates instead of text messages
+
+In case you believe flash is a "view" thing, or if you need to use
+different markup through your messages (custom actions, images...),
+you can define your flash messages in templates, and render them
+using a specific controller.
+
+Example from a route:
+
+```javascript
+Ember.ProfileRoute = Ember.Route.extend({
+  setupController: function(controller, profile) {
+    if(profile.isEmpty()) {
+      this.flash({
+        templateName: 'emptyProfileNotice',
+        controller: controller,
+      });
+    }
+    this._super(controller, profile);
+  },
+});
+```
+
+Example from a controller:
+
+```javascript
+App.PostController = Ember.ObjectController.extend({
+  needs: ['flashMessage'],
+
+  actions: {
+    save: function() {
+      var flashMessage = this.get('controllers.flashMessage');
+      var controller = this;
+
+      this.get('model').save()
+        .then(function() {
+          flashMessage.set('message', Ember.Object.create({
+            templateName: 'savedPostNotice',
+            controller: controller,
+          });
+        });
+    }
+  }
+});
+```
+
 ## Development
 
 This plugin is built with rake pipeline, which requires Ruby. To get
