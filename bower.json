@@ -1,0 +1,23 @@
+{
+  "name": "ember-flash-message",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ryanto/ember-flash-message",
+  "authors": [
+    "Ryan T"
+  ],
+  "description": "A simple plugin that allows you to display a message on the next route transition, similiar to Rails' flash[:notice]. This is useful for displaying one time notices on later pages.",
+  "main": "flash-message.js",
+  "keywords": [
+    "ember",
+    "flash",
+    "message"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
