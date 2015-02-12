@@ -18,36 +18,34 @@ Ember.FlashMessageController = Ember.Controller.extend({
   }
 
 });
-Ember.FlashMessageView = Ember.ContainerView.extend({
-  hideAndShowMessage: function() {
-    var currentMessage = this.get('controller.currentMessage'),
-        view;
-
-    if (currentMessage) {
-      view = Ember.View.create({
-        template: this.get('template')
-      });
-    }
-
-    this.set('currentView', view);
-  }.observes('controller.currentMessage')
-});
-
 Ember.Handlebars.registerHelper('flashMessage', function(options) {
-  var template = options.fn,
-      container = this._keywords.view.container,
-      controller = container.lookup('controller:flashMessage');
+  var container = this._keywords.view.container,
+      controller = container.lookup('controller:flashMessage'),
+
+      parent = Ember.ContainerView.extend({
+        hideAndShowMessage: function() {
+          var currentMessage = this.get('controller.currentMessage'),
+              view;
+
+          if (currentMessage) {
+            view = Ember.View.create({
+              template: this.get('template')
+            });
+          }
+
+          this.set('currentView', view);
+        }.observes('controller.currentMessage')
+      });
 
   options.hash.controller = controller;
   options.hashTypes = options.hashTypes || {};
 
-  Ember.Handlebars.helpers.view.helperFunction.call(this, ["flashMessage"], options.hash, options, options);
+  Ember.Handlebars.helpers.view.helperFunction.call(this, [parent], options.hash, options, options);
 });
 Ember.Application.initializer({
   name: 'flashMessage',
   initialize: function(container, application) {
     container.register('controller:flashMessage', Ember.FlashMessageController);
-    container.register('view:flashMessage', Ember.FlashMessageView);
   }
 });
 Ember.FlashMessageRouteMixin = Ember.Mixin.create({
