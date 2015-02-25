@@ -19,8 +19,7 @@ Ember.FlashMessageController = Ember.Controller.extend({
 
 });
 Ember.Handlebars.registerHelper('flashMessage', function(options) {
-  var template = options.fn,
-      container = options.data.keywords.controller.container,
+  var container = this._keywords.view.container,
       controller = container.lookup('controller:flashMessage'),
 
       parent = Ember.ContainerView.extend({
@@ -30,7 +29,7 @@ Ember.Handlebars.registerHelper('flashMessage', function(options) {
 
           if (currentMessage) {
             view = Ember.View.create({
-              template: template
+              template: this.get('template')
             });
           }
 
@@ -41,7 +40,7 @@ Ember.Handlebars.registerHelper('flashMessage', function(options) {
   options.hash.controller = controller;
   options.hashTypes = options.hashTypes || {};
 
-  Ember.Handlebars.helpers.view.call(this, parent, options);
+  Ember.Handlebars.helpers.view.helperFunction.call(this, [parent], options.hash, options, options);
 });
 Ember.Application.initializer({
   name: 'flashMessage',
